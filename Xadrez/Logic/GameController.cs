@@ -30,9 +30,8 @@ namespace Logic
 
         private void OrganizePawn()
         {
-            Board.AddPiece(new King(Colors.White, 3, 3));
-            Board.AddPiece(new Pawn(Colors.Black, 3, 2));
-            Board.AddPiece(new Rook(Colors.Black, 5, 6));
+            Board.AddPiece(new King(Colors.Black, 3, 1));
+            Board.AddPiece(new Rook(Colors.White, 5, 3));
 
             /*
                 for (int row = 1; row < Board.Rows; row += Board.Rows - 3)
@@ -92,6 +91,7 @@ namespace Logic
             DrawTable();
 
             Position destiny = DestinyRequest();
+
             Piece? removedPiece = MovePiece(origin, destiny);
 
             if (removedPiece != null)
@@ -101,12 +101,41 @@ namespace Logic
 
             DrawTable();
 
+            /*
+                if (KingInCheck(Board.SelectKing(OpostPlayer())))
+                {
+
+                    ChessInterface.ShowCkeck(OpostPlayer());
+                }
+
+             */
             ChangePlayer();
+        }
+
+        private bool KingInCheck(King king)
+        {
+            bool[,] allPossibleMovements = Board.AllPossibleMovementsTo(PlayerMove);
+            for (int y = 0; y < allPossibleMovements.GetLength(0); y++)
+            {
+                for (int x = 0; x < allPossibleMovements.GetLength(1); x++)
+                {
+                    if (x == king.Position.X && y == king.Position.Y && allPossibleMovements[y, x])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
 
         private void ChangePlayer()
         {
-            PlayerMove = PlayerMove == Colors.White ? Colors.Black : Colors.White;
+            PlayerMove = OpostPlayer();
+        }
+
+        private Colors OpostPlayer()
+        {
+            return PlayerMove == Colors.White ? Colors.Black : Colors.White;
         }
 
         private void AddRemovedPiece(Piece piece)
@@ -129,7 +158,7 @@ namespace Logic
                 ChessInterface.DestinyRequest(PlayerMove);
                 destiny = ChessInterface.PositionRequest();
                 Console.WriteLine(CanMoveDestiny(destiny));
-            } while (CanMoveDestiny(destiny));
+            } while (!CanMoveDestiny(destiny));
             Console.WriteLine("TESTE");
             return destiny;
         }
@@ -159,7 +188,11 @@ namespace Logic
 
         private bool CanMoveDestiny(Position destiny)
         {
-            return Board.HasPiece(destiny) && Board.SelectPiece(destiny).Color == PlayerMove; 
+            if (Board.IsPossibleToMove(destiny))
+            {
+                return !(Board.HasPiece(destiny) && Board.SelectPiece(destiny).Color == PlayerMove);
+            }
+            return false;
         }
     }
 }

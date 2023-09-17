@@ -1,5 +1,6 @@
 ﻿using Logic;
 using System.Data.Common;
+using Table.Enums;
 
 namespace Table
 {
@@ -17,7 +18,7 @@ namespace Table
             Chess = chess;
             Columns = columns;
             Rows = rows;
-            PossibleMoviments = new bool[rows, columns]; 
+            PossibleMoviments = new bool[rows, columns];
         }
 
         public void AddPiece(Piece piece)
@@ -36,7 +37,7 @@ namespace Table
         public Piece RemovePiece(Position position)
         {
             Piece removedPiece = Table[position.Y, position.X];
-            
+
             Table[position.Y, position.X] = null;
             return removedPiece;
         }
@@ -100,6 +101,41 @@ namespace Table
         public void ResetPossibleMovements()
         {
             PossibleMoviments = new bool[Rows, Columns];
+        }
+
+        public King SelectKing(Colors Player)
+        {
+            foreach (Piece piece in Table)
+            {
+                if (piece is King && piece.Color == Player)
+                {
+                    return (King)piece;
+                }
+            }
+            return null;
+        }
+
+        public bool[,] AllPossibleMovementsTo(Colors Player)
+        {
+            bool[,] allPossiblemovements = new bool[Rows, Columns];
+
+            foreach (Piece piece in Table)
+            {
+                bool[,] possivleMovements = piece.PossibleMovements(this);
+
+                for (int y = 0; y < Rows; y++)
+                {
+                    for (int x = 0; x < Columns; x++)
+                    {
+                        if (!allPossiblemovements[y, x] && possivleMovements[y, x])
+                        {
+                            allPossiblemovements[y, x] = true;
+                        }
+                    }
+                }
+
+            }
+            return allPossiblemovements;
         }
     }
 }

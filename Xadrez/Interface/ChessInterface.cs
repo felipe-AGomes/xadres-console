@@ -146,6 +146,11 @@ namespace Interface
             int y = 8 - int.Parse(pieceResponse[0]);
             return new Position(x, y);
         }
-    }
 
+        public static void ShowCkeck(Colors player)
+        {
+            Console.WriteLine();
+            Console.WriteLine($"JOGADOR {player} ESTÁ EM CHECK!");
+        }
+    }
 }
