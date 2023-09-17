@@ -13,60 +13,118 @@ namespace Interface
                 Console.Write($"{board.Rows - row} |");
                 for (int column = 0; column < board.Columns; column++)
                 {
-                    ConsoleColor defaultFontColor = Console.ForegroundColor;
-                    ConsoleColor defaultBackgroudColor = Console.BackgroundColor;
-                    if (board.HasPiece(column, row))
+                    Position position = new Position { X = row, Y = column };
+                    if (board.HasPiece(position))
                     {
-                        Piece selectedPiece = board.SelectPiece(column, row);
-                        if (selectedPiece.Color == Colors.White)
-                        {
-                            if (board.IsPossibleToMove(new Position { X = column, Y = row }))
-                            {
-                                Console.BackgroundColor = ConsoleColor.Cyan;
-                                Console.Write($" {selectedPiece.Name} ");
-                                Console.BackgroundColor = defaultBackgroudColor;
-                            }
-                            else
-                            {
-                                Console.Write($" {selectedPiece.Name} ");
-                            }
-                        }
-                        else
-                        {
-                            if (board.IsPossibleToMove(new Position { X = column, Y = row }))
-                            {
-                                Console.BackgroundColor = ConsoleColor.Cyan;
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.Write($" {selectedPiece.Name} ");
-                                Console.BackgroundColor = defaultBackgroudColor;
-                                Console.ForegroundColor = defaultFontColor;
-                            }
-                            else
-                            {
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.Write($" {selectedPiece.Name} ");
-                                Console.ForegroundColor = defaultFontColor;
-                            }
-                        }
+                        Piece selectedPiece = board.SelectPiece(position);
+                        DrawPiece(board, selectedPiece);
                     }
                     else
                     {
-                        if (board.IsPossibleToMove(new Position { X = column, Y = row }))
-                        {
-                            Console.ForegroundColor = ConsoleColor.Cyan;
-                            Console.Write("[-]");
-                            Console.ForegroundColor = defaultFontColor;
-                        }
-                        else
-                        {
-                            Console.Write(" - ");
-                        }
+                        DrawEmptyPosition(board, position);
                     }
                 }
                 Console.WriteLine();
             }
             Console.WriteLine("   ------------------------");
             Console.WriteLine("    A  B  C  D  E  F  G  H");
+            Console.WriteLine();
+        }
+
+        public static void DrawCapturedPieces(List<Piece> capturedPieces)
+        {
+            List<Piece> whitePieces = new();
+            List<Piece> blackPieces = new();
+            foreach (Piece piece in capturedPieces)
+            {
+                if (piece.Color == Colors.White)
+                {
+                    whitePieces.Add(piece);
+                }
+                else
+                {
+                    blackPieces.Add(piece);
+                }
+            }
+            Console.Write("White Pieces Captured: ");
+            CapturedPieces(whitePieces);
+            Console.Write("Black Pieces Captured: ");
+            CapturedPieces(blackPieces);
+            Console.WriteLine();
+        }
+
+        private static void CapturedPieces(List<Piece> pieces)
+        {
+            Console.Write("[ ");
+
+            foreach (Piece piece in pieces)
+            {
+                Console.Write("" + piece.Name);
+            }
+
+            Console.Write(" ]\n");
+        }
+
+        private static void DrawEmptyPosition(Board board, Position position)
+        {
+            ConsoleColor defaultFontColor = Console.ForegroundColor;
+            if (board.IsPossibleToMove(position))
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("[-]");
+                Console.ForegroundColor = defaultFontColor;
+            }
+            else
+            {
+                Console.Write(" - ");
+            }
+        }
+
+        private static void DrawPiece(Board board, Piece piece)
+        {
+            if (piece.Color == Colors.White)
+            {
+                WhitePiece(board, piece);
+            }
+            else
+            {
+                BlackPiece(board, piece);
+            }
+        }
+
+        private static void WhitePiece(Board board, Piece piece)
+        {
+            ConsoleColor defaultBackgroudColor = Console.BackgroundColor;
+            if (board.IsPossibleToMove(piece.Position))
+            {
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.Write($" {piece.Name} ");
+                Console.BackgroundColor = defaultBackgroudColor;
+            }
+            else
+            {
+                Console.Write($" {piece.Name} ");
+            }
+        }
+
+        private static void BlackPiece(Board board, Piece piece)
+        {
+            ConsoleColor defaultFontColor = Console.ForegroundColor;
+            ConsoleColor defaultBackgroudColor = Console.BackgroundColor;
+            if (board.IsPossibleToMove(piece.Position))
+            {
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($" {piece.Name} ");
+                Console.BackgroundColor = defaultBackgroudColor;
+                Console.ForegroundColor = defaultFontColor;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write($" {piece.Name} ");
+                Console.ForegroundColor = defaultFontColor;
+            }
         }
 
         public static void OriginRequest(Colors playerMove)

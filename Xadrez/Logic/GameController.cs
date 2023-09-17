@@ -9,6 +9,7 @@ namespace Logic
         protected Board Board { get; private set; }
         protected bool EndGame { get; private set; } = false;
         public Colors PlayerMove { get; private set; } = Colors.White;
+        public List<Piece> CapturedPieces = new();
 
         public GameController()
         {
@@ -19,7 +20,7 @@ namespace Logic
         {
             OrganizePawn();
             OrganizeBackrow();
-            ChessInterface.DrawBoard(Board);
+            DrawTable();
             while (!EndGame)
             {
                 NextPlayer();
@@ -31,7 +32,11 @@ namespace Logic
         {
             Board.AddPiece(new King(Colors.White, 3, 3));
             Board.AddPiece(new King(Colors.White, 2, 2));
+            Board.AddPiece(new Pawn(Colors.Black, 3, 2));
             Board.AddPiece(new King(Colors.Black, 4, 4));
+            Board.AddPiece(new Rook(Colors.Black, 5, 6));
+            /*
+             */
             /*
                 for (int row = 1; row < Board.Rows; row += Board.Rows - 3)
                 {
@@ -86,19 +91,37 @@ namespace Logic
             Position origin = OriginRequest();
             Piece piece = Board.SelectPiece(origin);
             Board.AddPossibleMovements(piece.PossibleMovements(Board));
-            ChessInterface.DrawBoard(Board);
+
+            DrawTable();
 
             Position destiny = DestinyRequest();
-            Piece removedPiece = MovePiece(origin, destiny);
-            ChessInterface.DrawBoard(Board);
+            Piece? removedPiece = MovePiece(origin, destiny);
 
             if (removedPiece != null)
             {
-                // provisório
-                Console.WriteLine("Comeu um");
+                AddRemovedPiece(removedPiece);
             }
 
+            DrawTable();
+
+            ChangePlayer();
+        }
+
+        private void ChangePlayer()
+        {
             PlayerMove = PlayerMove == Colors.White ? Colors.Black : Colors.White;
+        }
+
+        private void AddRemovedPiece(Piece piece)
+        {
+
+            CapturedPieces.Add(piece);
+        }
+
+        private void DrawTable()
+        {
+            ChessInterface.DrawBoard(Board);
+            ChessInterface.DrawCapturedPieces(CapturedPieces);
         }
 
         private Position DestinyRequest()
@@ -125,7 +148,7 @@ namespace Logic
             return origin;
         }
 
-        private Piece MovePiece(Position origin, Position destiny)
+        private Piece? MovePiece(Position origin, Position destiny)
         {
             Piece removedPiece = Board.MovePiece(origin, destiny);
             Board.ResetPossibleMovements();
