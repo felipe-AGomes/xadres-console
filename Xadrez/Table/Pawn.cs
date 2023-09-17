@@ -10,7 +10,27 @@ namespace Table
 
         public override bool[,] PossibleMovements(Board board)
         {
-            throw new NotImplementedException();
+            bool[,] possibleMovements = new bool[board.Columns, board.Rows];
+            Position newPosition;
+            if (Color == Colors.White)
+            {
+                // top
+                newPosition = new Position { X = Position.X, Y = Position.Y - 1 };
+                if (CanMove(board, newPosition))
+                {
+                    possibleMovements[newPosition.Y, newPosition.X] = true;
+                }
+            }
+            else
+            {
+                // bottom
+                newPosition = new Position { X = Position.X, Y = Position.Y + 1 };
+                if (CanMove(board, newPosition))
+                {
+                    possibleMovements[newPosition.Y, newPosition.X] = true;
+                }
+            }
+            return possibleMovements;
         }
     }
 }

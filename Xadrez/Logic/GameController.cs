@@ -9,80 +9,90 @@ namespace Logic
         protected Board Board { get; private set; }
         protected bool EndGame { get; private set; } = false;
         public Colors PlayerMove { get; private set; } = Colors.White;
-        public List<Piece> CapturedPieces = new();
+        public List<Piece> CapturedPieces { get; private set; }
 
         public GameController()
         {
             Board = new(this, 8, 8);
+            CapturedPieces = new();
         }
 
         public void StartGame()
         {
             OrganizePawn();
-            OrganizeBackrow();
+            OrganizeBackLine();
             DrawTable();
             while (!EndGame)
             {
-                NextPlayer();
+                NextPlay();
             }
 
         }
 
         private void OrganizePawn()
         {
-            Board.AddPiece(new King(Colors.Black, 3, 1));
-            Board.AddPiece(new Rook(Colors.White, 5, 3));
-
-            /*
-                for (int row = 1; row < Board.Rows; row += Board.Rows - 3)
+            for (int row = 1; row < Board.Rows; row += Board.Rows - 3)
+            {
+                for (int column = 0; column < Board.Columns; column++)
                 {
-                    for (int column = 0; column < Board.Columns; column++)
+                    if (row == 1)
                     {
-                        if (row == 1)
-                        {
-                            Board.AddPiece(new Pawn(Colors.Black, column, row));
-                        }
-                        else
-                        {
-                            Board.AddPiece(new Pawn(Colors.White, column, row));
-                        }
-                    }
-                }
-             */
-        }
-
-        private void OrganizeBackrow()
-        {
-            /*
-                for (int row = 0; row < Board.Rows; row += Board.Rows - 1)
-                {
-                    if (row == 0)
-                    {
-                        Board.AddPiece(new Rook(Colors.Black, 0, row));
-                        Board.AddPiece(new Knight(Colors.Black, 1, row));
-                        Board.AddPiece(new Bishop(Colors.Black, 2, row));
-                        Board.AddPiece(new Queen(Colors.Black, 3, row));
-                        Board.AddPiece(new King(Colors.Black, 4, row));
-                        Board.AddPiece(new Bishop(Colors.Black, 5, row));
-                        Board.AddPiece(new Knight(Colors.Black, 6, row));
-                        Board.AddPiece(new Rook(Colors.Black, 7, row));
+                        AddPiece(new Pawn(Colors.Black, column, row));
                     }
                     else
                     {
-                        Board.AddPiece(new Rook(Colors.White, 0, row));
-                        Board.AddPiece(new Knight(Colors.White, 1, row));
-                        Board.AddPiece(new Bishop(Colors.White, 2, row));
-                        Board.AddPiece(new King(Colors.White, 4, row));
-                        Board.AddPiece(new Queen(Colors.White, 3, row));
-                        Board.AddPiece(new Bishop(Colors.White, 5, row));
-                        Board.AddPiece(new Knight(Colors.White, 6, row));
-                        Board.AddPiece(new Rook(Colors.White, 7, row));
+                        AddPiece(new Pawn(Colors.White, column, row));
                     }
                 }
-             */
+            }
+
         }
 
-        private void NextPlayer()
+
+        private void OrganizeBackLine()
+        {
+
+            for (int row = 0; row < Board.Rows; row += Board.Rows - 1)
+            {
+                if (row == 0)
+                {
+                    AddPiece(new Rook(Colors.Black, 0, row));
+                    AddPiece(new Knight(Colors.Black, 1, row));
+                    AddPiece(new Bishop(Colors.Black, 2, row));
+                    AddPiece(new Queen(Colors.Black, 3, row));
+                    AddPiece(new King(Colors.Black, 4, row));
+                    AddPiece(new Bishop(Colors.Black, 5, row));
+                    AddPiece(new Knight(Colors.Black, 6, row));
+                    AddPiece(new Rook(Colors.Black, 7, row));
+                }
+                else
+                {
+                    AddPiece(new Rook(Colors.White, 0, row));
+                    AddPiece(new Knight(Colors.White, 1, row));
+                    AddPiece(new Bishop(Colors.White, 2, row));
+                    AddPiece(new King(Colors.White, 4, row));
+                    AddPiece(new Queen(Colors.White, 3, row));
+                    AddPiece(new Bishop(Colors.White, 5, row));
+                    AddPiece(new Knight(Colors.White, 6, row));
+                    AddPiece(new Rook(Colors.White, 7, row));
+                }
+            }
+
+        }
+
+        private void AddPiece(Piece piece)
+        {
+            Board.AddPiece(piece);
+        }
+
+        private void NextPlay()
+        {
+            NextMove();
+
+            ChangePlayer();
+        }
+
+        private void NextMove()
         {
             Position origin = OriginRequest();
             Piece piece = Board.SelectPiece(origin);
@@ -96,20 +106,25 @@ namespace Logic
 
             if (removedPiece != null)
             {
-                AddRemovedPiece(removedPiece);
+                AddCapturedPiece(removedPiece);
             }
 
             DrawTable();
 
-            /*
-                if (KingInCheck(Board.SelectKing(OpostPlayer())))
-                {
+            IsInCheck();
+        }
 
-                    ChessInterface.ShowCkeck(OpostPlayer());
-                }
+        private void IsInCheck()
+        {
+            if (KingInCheck(GetKing(OpostPlayer())))
+            {
+                ChessInterface.ShowCkeck(OpostPlayer());
+            }
+        }
 
-             */
-            ChangePlayer();
+        private King GetKing(Colors player)
+        {
+            return Board.SelectKing(player);
         }
 
         private bool KingInCheck(King king)
@@ -138,7 +153,7 @@ namespace Logic
             return PlayerMove == Colors.White ? Colors.Black : Colors.White;
         }
 
-        private void AddRemovedPiece(Piece piece)
+        private void AddCapturedPiece(Piece piece)
         {
 
             CapturedPieces.Add(piece);
@@ -157,9 +172,7 @@ namespace Logic
             {
                 ChessInterface.DestinyRequest(PlayerMove);
                 destiny = ChessInterface.PositionRequest();
-                Console.WriteLine(CanMoveDestiny(destiny));
             } while (!CanMoveDestiny(destiny));
-            Console.WriteLine("TESTE");
             return destiny;
         }
 

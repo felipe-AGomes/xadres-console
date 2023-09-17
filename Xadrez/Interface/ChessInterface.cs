@@ -27,7 +27,7 @@ namespace Interface
                 Console.WriteLine();
             }
             Console.WriteLine("   ------------------------");
-            Console.WriteLine("    A  B  C  D  E  F  G  H");
+            Console.WriteLine("    a  b  c  d  e  f  g  h");
             Console.WriteLine();
         }
 
@@ -130,19 +130,19 @@ namespace Interface
         public static void OriginRequest(Colors playerMove)
         {
             Console.WriteLine("Vez do jogador: " + playerMove);
-            Console.Write("Origem (Ex: 3/D): ");
+            Console.Write("Origem (Ex: 3/d): ");
         }
 
         public static void DestinyRequest(Colors playerMove)
         {
             Console.WriteLine("Vez do jogador: " + playerMove);
-            Console.Write("Destino (Ex: 3/D): ");
+            Console.Write("Destino (Ex: 3/d): ");
         }
 
         public static Position PositionRequest()
         {
             string[] pieceResponse = Console.ReadLine().Split("/");
-            int x = char.Parse(pieceResponse[1]) - 'A';
+            int x = char.Parse(pieceResponse[1]) - 'a';
             int y = 8 - int.Parse(pieceResponse[0]);
             return new Position(x, y);
         }

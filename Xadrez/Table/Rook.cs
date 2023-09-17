@@ -8,11 +8,6 @@ namespace Table
         {
         }
 
-        private bool CanMove(Board board, Position newPosition)
-        {
-            return board.SelectPiece(newPosition.X, newPosition.Y) == null || board.SelectPiece(newPosition.X, newPosition.Y).Color != Color;
-        }
-
         public override bool[,] PossibleMovements(Board board)
         {
             bool[,] possibleMovements = new bool[board.Columns, board.Rows];

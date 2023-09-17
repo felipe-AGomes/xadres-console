@@ -121,19 +121,21 @@ namespace Table
 
             foreach (Piece piece in Table)
             {
-                bool[,] possivleMovements = piece.PossibleMovements(this);
-
-                for (int y = 0; y < Rows; y++)
+                if (piece != null)
                 {
-                    for (int x = 0; x < Columns; x++)
+                    bool[,] possivleMovements = piece.PossibleMovements(this);
+
+                    for (int y = 0; y < Rows; y++)
                     {
-                        if (!allPossiblemovements[y, x] && possivleMovements[y, x])
+                        for (int x = 0; x < Columns; x++)
                         {
-                            allPossiblemovements[y, x] = true;
+                            if (!allPossiblemovements[y, x] && possivleMovements[y, x])
+                            {
+                                allPossiblemovements[y, x] = true;
+                            }
                         }
                     }
                 }
-
             }
             return allPossiblemovements;
         }

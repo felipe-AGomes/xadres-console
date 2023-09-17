@@ -15,6 +15,11 @@ namespace Table
             Name = name;
         }
 
+        protected bool CanMove(Board board, Position newPosition)
+        {
+            return board.SelectPiece(newPosition.X, newPosition.Y) == null || board.SelectPiece(newPosition.X, newPosition.Y).Color != Color;
+        }
+
         public abstract bool[,] PossibleMovements(Board board);
     }
 }
