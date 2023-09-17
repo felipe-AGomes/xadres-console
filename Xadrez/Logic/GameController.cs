@@ -31,12 +31,9 @@ namespace Logic
         private void OrganizePawn()
         {
             Board.AddPiece(new King(Colors.White, 3, 3));
-            Board.AddPiece(new King(Colors.White, 2, 2));
             Board.AddPiece(new Pawn(Colors.Black, 3, 2));
-            Board.AddPiece(new King(Colors.Black, 4, 4));
             Board.AddPiece(new Rook(Colors.Black, 5, 6));
-            /*
-             */
+
             /*
                 for (int row = 1; row < Board.Rows; row += Board.Rows - 3)
                 {
@@ -131,7 +128,7 @@ namespace Logic
             {
                 ChessInterface.DestinyRequest(PlayerMove);
                 destiny = ChessInterface.PositionRequest();
-                Console.WriteLine(CanMoveOrigin(destiny));
+                Console.WriteLine(CanMoveDestiny(destiny));
             } while (CanMoveDestiny(destiny));
             Console.WriteLine("TESTE");
             return destiny;
@@ -162,7 +159,7 @@ namespace Logic
 
         private bool CanMoveDestiny(Position destiny)
         {
-            return !Board.HasPiece(destiny) || (Board.SelectPiece(destiny) is Piece && Board.SelectPiece(destiny).Color == PlayerMove);
+            return Board.HasPiece(destiny) && Board.SelectPiece(destiny).Color == PlayerMove; 
         }
     }
 }

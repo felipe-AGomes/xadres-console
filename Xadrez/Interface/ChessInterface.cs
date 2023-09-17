@@ -13,7 +13,7 @@ namespace Interface
                 Console.Write($"{board.Rows - row} |");
                 for (int column = 0; column < board.Columns; column++)
                 {
-                    Position position = new Position { X = row, Y = column };
+                    Position position = new Position { X = column, Y = row};
                     if (board.HasPiece(position))
                     {
                         Piece selectedPiece = board.SelectPiece(position);

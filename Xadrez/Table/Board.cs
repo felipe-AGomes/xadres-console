@@ -81,7 +81,7 @@ namespace Table
                 return null;
             }
             Piece removedPiece = null;
-            if (SelectPiece(destiny) is Piece)
+            if (HasPiece(destiny))
             {
                 removedPiece = RemovePiece(destiny);
             }
